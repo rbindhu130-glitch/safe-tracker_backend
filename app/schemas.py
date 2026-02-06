@@ -11,6 +11,8 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     id: int
+    class Config:
+        orm_mode = True
 
 class VolunteerBase(BaseModel):
     fullname: str
@@ -22,7 +24,7 @@ class VolunteerBase(BaseModel):
     availability: Optional[str] = None
 
 class VolunteerCreate(VolunteerBase):
-    pass
+    id_proof_path: Optional[str] = None
 
 class VolunteerResponse(VolunteerBase):
     id: int
@@ -37,14 +39,33 @@ class IncidentBase(BaseModel):
     category: str
     description: str
     contact: Optional[str] = None
+    status: Optional[str] = None
 
 
 class IncidentCreate(IncidentBase):
     pass        
 
 
+class IncidentStatusUpdate(BaseModel):
+    status: str
+
+
 class IncidentResponse(IncidentBase):
     id: int
+    owner_id: int
+    owner: UserResponse
+    status: str
+    photo_path: Optional[str] = None
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class IncidentCreateResponse(BaseModel):
+    id: int
+    owner_id: int
+    owner: UserResponse
     photo_path: Optional[str] = None
     created_at: datetime
 

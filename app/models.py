@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, String, Text, DateTime, text
 from sqlalchemy.sql import func
 from .database import Base
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
 
 class User(Base):
     __tablename__ = "users"
@@ -8,6 +10,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    incidents = relationship("Incident", back_populates="owner")
 
 
 class Volunteer(Base):
@@ -33,5 +37,8 @@ class Incident(Base):
     description = Column(Text)
     photo_path = Column(String, nullable=True)
     contact = Column(String, nullable=True)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    owner = relationship("User", back_populates="incidents")
+    status = Column(String, default="pending", server_default=text("'pending'"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
